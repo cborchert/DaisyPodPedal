@@ -23,7 +23,7 @@ Timer display_timer(DISPLAY_REFRESH_TIMEOUT_MS);
 
 static constexpr auto AUDIO_SAMPLE_RATE = SaiHandle::Config::SampleRate::SAI_48KHZ;
 
-// TODO: move to a class
+// TODO: move all Oscilloscope functionality to a class
 // the sample buffer is oversampled to get a smoother waveform
 static constexpr int OVERSAMPLE_FACTOR = 16;
 const bool DRAW_CENTER_LINE = false;
@@ -119,25 +119,28 @@ void DrawScope()
     }
 }
 
+// TODO: move to a DisplayHeader class
 void DisplayHeaders()
 {
+    // NOTE: my display has a 16px high yellow zone at the top for text.
+    //  I can use two lines of Font_6x8 starting at (0,0) and (0,9) without going out of bounds of this zone
+
     int buffer_size = 32;
     char buf[buffer_size];
+    // NOTE: I was using %f to print the float but nothing was showing
+    // ChatGPT wrote:
+    // >  In many embedded toolchains (ARM GCC, newlib-nano, etc.),
+    // >  %f formatting is disabled by default to save flash space.
+    // >  When that happens break the float into parts and use `"Avg Sig: %d.%03d"`
     int whole = (int)limit;
     int frac = (int)((limit - whole) * 10000);
-    // NOTE: ChatGPT wrote:
-    // In many embedded toolchains (ARM GCC, newlib-nano, etc.),
-    // %f formatting is disabled by default to save flash space. When that happens:
-    snprintf(buf, 20, "Avg Sig: %d.%03d", whole, frac);
-    oled.display.SetCursor(0, 0);
-    oled.display.WriteString(buf, Font_6x8, true);
     snprintf(buf,
              buffer_size,
-             "limitjyp,: %d.%04d | %s",
+             "limit,: %d.%04d | %s",
              whole,
              frac,
              is_limit_enabled ? "ON" : "OFF");
-    oled.display.SetCursor(0, 9);
+    oled.display.SetCursor(0, 0);
     oled.display.WriteString(buf, Font_6x8, true);
 }
 
@@ -159,13 +162,14 @@ void AudioCallback(AudioHandle::InputBuffer in,
                    AudioHandle::OutputBuffer out,
                    size_t size)
 {
-    // hw.ProcessAllControls();
     HandleControls();
     for (size_t i = 0; i < size; i++)
     {
-        // dropping right channel
+        // NOTE: dropping right channel which seems to be silent on my guitars (either mono input or a cable issue)
         float signal_l = in[0][i];
         float signal_l_processed = signal_l;
+
+        // apply limiting if enabled
         if (is_limit_enabled)
         {
             if (signal_l_processed > limit)

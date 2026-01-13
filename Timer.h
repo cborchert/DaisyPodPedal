@@ -5,6 +5,7 @@
 #include <cstdint>     // we need uint32_t
 
 using namespace daisy;
+// LEARNING: you can bring in specific names from a namespace rather than the whole thing this can help avoid name collisions
 using std::uint32_t;
 
 class Timer

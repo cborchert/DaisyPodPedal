@@ -15,7 +15,7 @@ The project currently uses:
 
 #### OLED Wiring
 
-I have the OLED hooked up to my DaisyPod using the available on the right hand side of this [pinout diagram](https://daisy.audio/product/Daisy-Pod/#pinout). To make things semi permanent I soldered a 1x12 female pin header to the exposed pins so that I can run jumper wires from the DaisyPod to a breadboard to connect additional modules such as the OLED display.
+I have the OLED hooked up to my DaisyPod using the pins available on the right hand side of this [pinout diagram](https://daisy.audio/product/Daisy-Pod/#pinout). To make things semi permanent I soldered a 1x12 female pin header to the exposed pins so that I can run jumper wires from the DaisyPod to a breadboard to connect additional modules such as the OLED display.
 
 The OLED module is wired up as follows:
   - Ground: DaisyPod GND    -> OLED GND
@@ -54,4 +54,28 @@ dfu-util: Error during download get_status
 make: *** [program-dfu] Error 74
 ```
 
+*Note that the output ends in an error. This is normal, just don't ask me why!*
+
 The program should now be running on your DaisyPod! If you encounter any errors, try running the tasks `build_all` first. 
+
+## A note about LLM usage / code generation
+
+This is a learning project. The goal is not to crank out features as fast as possible. 
+
+I am **not** vibe coding. 
+
+However, if I get stuck, and there are no easy answers that I can find using my debugging skills and GoogleFu, I am not depriving myself of asking ChatGPT or Claude.
+
+For this project the rules I've put in place for myself are:
+- All code and documentation is written by hand
+- Any LLM code completion functionality is snoozed or off while coding in this project
+- If I don't understand something, start by checking human sources of knowledge
+  - Docs
+  - Code
+  - Community posts
+- If I still don't understand, free feel to ask an LLM with the following constraints
+  - Do not copy and paste code -- type it out
+  - Don't use code you don't understand; if you don't understand, continue "chatting" or digging until you do
+- When you learn something essential and new, you should probably document it (I'm often using `// LEARNING: ` comments that would often be uninteresting in a real project but serve as a reminder for me).
+
+It's too easy to be tempted into using an agent to go quickly, but I don't want a product. I want to learn, and I want to build something that I understand and is mine. 
